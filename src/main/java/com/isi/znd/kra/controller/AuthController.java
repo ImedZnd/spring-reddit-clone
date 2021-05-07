@@ -30,6 +30,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("1");
        return  authService.login(loginRequest);
     }
 

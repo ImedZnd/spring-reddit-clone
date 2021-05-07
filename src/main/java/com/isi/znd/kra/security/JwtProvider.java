@@ -1,6 +1,5 @@
 package com.isi.znd.kra.security;
 
-import com.isi.znd.kra.model.User;
 import com.isi.znd.kra.model.exeptions.SpringRedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,8 +22,7 @@ import static java.util.Date.from;
 public class JwtProvider {
 
     private KeyStore keyStore;
-    @Value("${jwt.expiration.time}")
-    private Long jwtExpirationInMillis;
+
 
     @PostConstruct
     public void init() {
@@ -44,7 +42,14 @@ public class JwtProvider {
                 .setSubject(principal.getUsername())
                 .setIssuedAt(from(Instant.now()))
                 .signWith(getPrivateKey())
-                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
+                .compact();
+    }
+
+    public String generateTokenWithUserName(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(from(Instant.now()))
+                .signWith(getPrivateKey())
                 .compact();
     }
 
@@ -55,4 +60,29 @@ public class JwtProvider {
             throw new SpringRedditException("Exception occured while retrieving public key from keystore", e);
         }
     }
+
+    public boolean validateToken(String jwt) {
+        parserBuilder().setSigningKey(getPublickey()).build().parseClaimsJws(jwt);
+        return true;
+    }
+
+    private PublicKey getPublickey() {
+        try {
+            return keyStore.getCertificate("springblog").getPublicKey();
+        } catch (KeyStoreException e) {
+            throw new SpringRedditException("Exception occured while " +
+                    "retrieving public key from keystore", e);
+        }
+    }
+
+    public String getUsernameFromJwt(String token) {
+        Claims claims = parserBuilder()
+                .setSigningKey(getPublickey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
+    }
+
 }

@@ -12,6 +12,7 @@ import com.isi.znd.kra.repository.VerificationTokenRepository;
 import com.isi.znd.kra.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -94,5 +95,10 @@ public class AuthService {
         System.out.println(token);
         return new AuthenticationResponse(token,loginRequest.getUsername());
 
+    }
+
+    public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
     }
 }

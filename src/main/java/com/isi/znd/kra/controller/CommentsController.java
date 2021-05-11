@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comments/")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200/")
 public class CommentsController {
 
     private final CommentService commentService;

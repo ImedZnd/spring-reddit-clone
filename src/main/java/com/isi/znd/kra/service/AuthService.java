@@ -40,20 +40,28 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     @Transactional
-    public void signup(RegisterRequest registerRequest){
-        User user = new User();
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setUsername(registerRequest.getUsername());
-        user.setCreated(Instant.now());
-        user.setEnabled(false);
+    public int signup(RegisterRequest registerRequest){
+        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()){
+            System.out.println(userRepository.findByUsername(registerRequest.getUsername()).isPresent());
+            return 0;
+        }
+        else {
 
-        userRepository.save(user);
-        
-        String token = generateVerificationToken(user);
-        mailService.sendMail(new NotificationEmail("Please activate your accout",
-                user.getEmail(),"Pleaz activate tou account "+
-                "http://localhost:8080/api/auth/accountVerification/" + token));
+            User user = new User();
+            user.setEmail(registerRequest.getEmail());
+            user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+            user.setUsername(registerRequest.getUsername());
+            user.setCreated(Instant.now());
+            user.setEnabled(false);
+
+            userRepository.save(user);
+
+            String token = generateVerificationToken(user);
+            mailService.sendMail(new NotificationEmail("Please activate your accout",
+                    user.getEmail(), "Pleaz activate tou account " +
+                    "http://localhost:8080/api/auth/accountVerification/" + token));
+            return  1;
+        }
     }
 
     private String generateVerificationToken(User user) {

@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/api/subreddit")
 @AllArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "http://localhost:4200/")
 public class SubredditController {
     private final SubredditService subredditService;
 

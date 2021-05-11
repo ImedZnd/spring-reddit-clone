@@ -18,6 +18,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200/")
 public class AuthController {
 
     private final AuthService authService;
@@ -25,14 +26,20 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody RegisterRequest registerRequest){
-        authService.signup(registerRequest);
-        return new ResponseEntity<>("user register sucess", OK );
+        System.out.println(registerRequest);
+        if(authService.signup(registerRequest)==1){
+            return new ResponseEntity<>("user register sucess", HttpStatus.OK );
+        }
+        else{
+            return new ResponseEntity<>("user already register",HttpStatus.CONFLICT );
+        }
+
     }
 
     @GetMapping("accountVerification/{token}")
     public  ResponseEntity<String> verifiyAccount(@PathVariable String token){
         authService.verifyAccount(token);
-        return new ResponseEntity<>("Account Activated Succesfully", OK);
+        return new ResponseEntity<>("Account Activated Succesfully", HttpStatus.OK);
     }
 
     @PostMapping("/login")

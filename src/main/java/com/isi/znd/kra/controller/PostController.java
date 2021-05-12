@@ -15,7 +15,7 @@ import static org.springframework.http.ResponseEntity.status;
 @RestController
 @RequestMapping("/api/posts/")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PostController {
 
     private final PostService postService;
@@ -28,7 +28,9 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostResponse>> getAllPosts() {
-        return status(HttpStatus.OK).body(postService.getAllPosts());
+        ResponseEntity<List<PostResponse>> x = status(HttpStatus.OK).body(postService.getAllPosts());
+        System.out.println("getAllPosts()");
+        return x;
     }
 
     @GetMapping("/{id}")

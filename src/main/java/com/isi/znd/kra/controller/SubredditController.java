@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/subreddit")
 @AllArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class SubredditController {
     private final SubredditService subredditService;
 
@@ -27,9 +27,11 @@ public class SubredditController {
 
     @GetMapping
     public ResponseEntity<List<SubredditDto>> getAllSubreddits() {
-        return ResponseEntity
+        ResponseEntity<List<SubredditDto>> x =  ResponseEntity
                 .status(HttpStatus.OK)
                 .body(subredditService.getAll());
+        System.out.println("getAllSubreddits()");
+        return x;
     }
 
     @GetMapping("/{id}")
